@@ -121,8 +121,8 @@ def randomWalk(graph, max_iter):
 
 def main():
     # Create random graph with numpy random function
-    adj_matrix = np.random.randint(0, 1, size=(5000,5000))
-    graph = nx.convert_matrix.from_numpy_array(adj_matrix)
+    adj_matrix = np.random.randint(0, 2, size=(5,5))
+    graph = nx.convert_matrix.from_numpy_array(adj_matrix, create_using=nx.DiGraph)
 
     # nx.draw_networkx(graph, with_labels=True)#, labels={0: 1, 1: 2, 2: 3, 3: 4, 4: 80})
     # plt.savefig('graph.png')
@@ -133,8 +133,8 @@ def main():
     new_time = time.time()
     print('Networkx Page Rank')
     print(f'Time: {round(new_time-old_time, 4)}')
-    # for val in page_rank.values():
-    #     print(round(val, 4), end=' ')
+    for val in page_rank.values():
+        print(round(val, 4), end=' ')
     print()
 
     # Calculate and print custom implementation of pagerank
@@ -150,8 +150,8 @@ def main():
     page_rank = pageRank(custom_adj_matrix, 0.85, 100, 0.000001)
     new_time = time.time()
     print(f'Time: {round(new_time-old_time, 4)}')
-    # for val in page_rank:
-        # print(round(val, 4), end=' ')
+    for val in page_rank:
+        print(round(val, 4), end=' ')
     print()
 
     print('\nOur Fast Page Rank')
@@ -159,15 +159,15 @@ def main():
     page_rank = fastPageRank(custom_adj_matrix, 0.85, 100, 0.000001)
     new_time = time.time()
     print(f'Time: {round(new_time-old_time, 4)}')
-    # for val in page_rank:
-        # print(round(val, 4), end=' ')
+    for val in page_rank:
+        print(round(val, 4), end=' ')
     print()
 
     # Create a random walk with max_iter iterations to see how close it is to PageRank
     print('\nRandom Walk')
     random_walk_vals = randomWalk(adj_matrix, 10000)
-    # for val in random_walk_vals:
-    #     print(round(val, 4), end=' ')
+    for val in random_walk_vals:
+        print(round(val, 4), end=' ')
     print()
 
 if __name__ == '__main__':
