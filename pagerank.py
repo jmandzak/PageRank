@@ -45,15 +45,48 @@ def pageRank(graph, d, max_iter, epsilon):
     print(f'Number of iterations to converge: {num_iterations}')
     return page_rank
 
+def random_walk(graph, max_iter):
+    # initialize the visited values to 0 for each node
+    visited = []
+    for _ in range(graph[0].size):
+        visited.append(0)
+
+    current_node = 0
+    for _ in range(max_iter):
+        row = graph[current_node]
+        choice = np.random.random()
+        
+        # if choice is less than 0.15 (which is the probability it will jump to a random node), jump to a random node
+        if choice < 0.15:
+            current_node = np.random.choice(graph[0].size)
+        else:
+            # construct possible options
+            connected_nodes = []
+            for i, edge in enumerate(row):
+                if edge == 1:
+                    connected_nodes.append(i)
+            # special case if there's no outgoing edges
+            if len(connected_nodes) == 0:
+                connected_nodes.append(current_node)
+
+            # jump to next node
+            current_node = np.random.choice(connected_nodes)
+        
+        visited[current_node] += 1
+    
+    # normalize visited
+    visited = np.divide(visited, max_iter)
+    return visited
+
 
 def main():
     # Create random graph, get adjacency matrix from it
-    graph = nx.random_graphs.fast_gnp_random_graph(100, 0.75, directed=True)
+    graph = nx.random_graphs.fast_gnp_random_graph(5, 0.5, directed=True)
     adj_matrix = nx.adjacency_matrix(graph).todense()
     adj_matrix = adj_matrix.astype(np.float64)
 
-    # nx.draw_networkx(graph, with_labels=True)#, labels={0: 1, 1: 2, 2: 3, 3: 4, 4: 80})
-    # plt.savefig('graph.png')
+    nx.draw_networkx(graph, with_labels=True)#, labels={0: 1, 1: 2, 2: 3, 3: 4, 4: 80})
+    plt.savefig('graph.png')
 
     # Calculate and print networkx implementation of pagerank
     page_rank = nx.pagerank(graph)
@@ -66,6 +99,13 @@ def main():
     print('\nOur Page Rank Values')
     page_rank = pageRank(adj_matrix, 0.85, 10000, 0.000001)
     for val in page_rank:
+        print(round(val, 4), end=' ')
+    print()
+
+    # Create a random walk with max_iter iterations to see how close it is to PageRank
+    print('\nRandom Walk Values')
+    random_walk_vals = random_walk(adj_matrix, 10000)
+    for val in random_walk_vals:
         print(round(val, 4), end=' ')
     print()
 
